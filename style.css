@@ -71,55 +71,51 @@ nav a:hover {
     background-color: #ccc; /* Light gray on hover */
 }
 
+/* ... (Your existing styles) ... */
+
 /* Digital Pet Styles */
 #pet-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 100; /* Ensure the pet is on top */
-}
-.pet {
-  width: 100px; /* Adjust as needed */
-  height: 100px;
-  background-image: url('pet_happy.png'); /* Initial pet image */
-  background-size: cover;
-  transition: background-image 0.3s ease; /* For smooth image transitions */
-}
-
-/* Stat Bars */
-.pet-stats {
-  /* ... styling for the stats container ... */
-}
-
-.bar {
-  height: 10px; /* Adjust as needed */
-  background-color: lightgray;
-}
-
-#healthBar { 
-  width: 100%; /* Initial full health */
-  background-color: green;
-}
-
-#manaBar {
-  width: 100%; /* Initial full mana */
-  background-color: blue;
-}
-
-#expBar {
-  width: 0%; /* Initial zero experience */
-  background-color: yellow;
-}
-
-/* Feeding Toggle */
-#feedingToggle {
-  /* ... styling for the toggle button and food options ... */
-}
-
-/* Skill Tree (Initially Hidden) */
-#skillTree {
-  /* ... styling for the skill tree ... */
-}
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999; /* Ensure the pet is on top */
+  }
+  
+  .pet {
+    width: 100px; 
+    height: 100px;
+    background-image: url('pet_happy.png');
+    background-size: cover;
+    transition: background-image 0.3s ease;
+  }
+  
+  /* Stat Bars */
+  .pet-stats {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .pet-stats .bar {
+    height: 10px; 
+    margin-bottom: 3px;
+  }
+  
+  #healthBar { 
+    width: 100%; 
+    background-color: green;
+  }
+  
+  #manaBar {
+    width: 100%; 
+    background-color: blue;
+  }
+  
+  #expBar {
+    width: 0%; 
+    background-color: yellow;
+  }
+  
 
 
 
