@@ -71,3 +71,55 @@ nav a:hover {
     background-color: #ccc; /* Light gray on hover */
 }
 
+/* Digital Pet Styles */
+#pet-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100; /* Ensure the pet is on top */
+}
+.pet {
+  width: 100px; /* Adjust as needed */
+  height: 100px;
+  background-image: url('pet_happy.png'); /* Initial pet image */
+  background-size: cover;
+  transition: background-image 0.3s ease; /* For smooth image transitions */
+}
+
+/* Stat Bars */
+.pet-stats {
+  /* ... styling for the stats container ... */
+}
+
+.bar {
+  height: 10px; /* Adjust as needed */
+  background-color: lightgray;
+}
+
+#healthBar { 
+  width: 100%; /* Initial full health */
+  background-color: green;
+}
+
+#manaBar {
+  width: 100%; /* Initial full mana */
+  background-color: blue;
+}
+
+#expBar {
+  width: 0%; /* Initial zero experience */
+  background-color: yellow;
+}
+
+/* Feeding Toggle */
+#feedingToggle {
+  /* ... styling for the toggle button and food options ... */
+}
+
+/* Skill Tree (Initially Hidden) */
+#skillTree {
+  /* ... styling for the skill tree ... */
+}
+
+
+
