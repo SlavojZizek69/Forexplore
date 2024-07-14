@@ -7,152 +7,143 @@ body {
     color: #fff; /* Crisp White */
 }
 
-/* ... (rest of your CSS) ... */ 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
+h1, h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+/* Header Styles */
+header {
+    background-color: #000;
+}
+
+nav ul {
+    justify-content: flex-end; 
+}
+
+nav a {
+    color: #fff; 
+    transition: color 0.3s ease; 
+}
+
+nav a:hover {
+    color: #ccc; 
+}
+
+/* Hero Styles */
+#hero {
+    background-image: url('hero-image-luxury.jpg');
+    min-height: 600px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#hero h1 {
+    font-size: 56px;
+    margin-bottom: 20px;
+}
+
+#hero p {
+    font-size: 28px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #fff; 
+    color: #000; 
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #ccc;
+}
 /* Digital Pet Styles */
 #pet-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
-}
-.pet {
-  width: 100px;
-  height: 100px;
-  position: relative;
-}
-.ear {
-  width: 20px;
-  height: 30px;
-  background-color: #fff; 
-  border-radius: 50% 50% 0 0; 
-  position: absolute;
-  top: -10px; 
-}
-.ear.left {
-  left: 10px;
-  transform: rotate(-15deg); 
-}
-.ear.right {
-  right: 10px;
-  transform: rotate(15deg); 
-}
-.face {
-  width: 80px;
-  height: 80px;
-  background-color: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 10px;
-  left: 10px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999; /* Ensure the pet is on top */
 }
 
-/* Eyes */
+.pet {
+    width: 60px;
+    height: 40px;
+    position: relative;
+    animation: walkCycle 2s infinite; 
+}
+
+@keyframes walkCycle {
+    0% { transform: translateX(0) translateY(0) scaleX(1); }
+    12.5% { transform: translateX(5px) translateY(-5px) scaleX(1); } /* Lift right leg */
+    25% { transform: translateX(10px) translateY(0) scaleX(1); } 
+    37.5% { transform: translateX(15px) translateY(-5px) scaleX(1); } /* Lift left leg */
+    50% { transform: translateX(20px) translateY(0) scaleX(1); } 
+    62.5% { transform: translateX(25px) translateY(-5px) scaleX(1); } /* Lift right leg */
+    75% { transform: translateX(30px) translateY(0) scaleX(1); }
+    87.5% { transform: translateX(35px) translateY(-5px) scaleX(1); } /* Lift left leg */
+    100% { transform: translateX(40px) translateY(0) scaleX(1); } 
+}
+
+.ear {
+    width: 15px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 50% 50% 0 0;
+    position: absolute;
+    top: -5px;
+}
+
+.ear.left {
+    left: 5px;
+    transform: rotate(-15deg);
+}
+
+.ear.right {
+    right: 5px;
+    transform: rotate(15deg);
+}
+
+.face {
+    width: 40px;
+    height: 30px;
+    background-color: #fff;
+    border-radius: 50% 50% 50% 50%;
+    position: absolute;
+    top: 5px;
+    left: 10px;
+}
+
 .eye {
-  width: 10px;
-  height: 10px;
-  background-color: #000;
-  border-radius: 50%;
-  position: absolute;
-  top: 30px;
+    width: 5px;
+    height: 5px;
+    background-color: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 15px;
 }
 
 .eye.left {
-  left: 25px;
+    left: 17px;
 }
 
 .eye.right {
-  right: 25px;
+    right: 17px;
 }
 
-/* Nose */
-.nose {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 10px solid #000;
-  position: absolute;
-  top: 50px;
-  left: 45px;
-}
+/* ... (Other styles for nose, mouth, whiskers, paws, tail) ... */
 
-/* Mouth */
-.mouth {
-  width: 20px;
-  height: 5px;
-  background-color: #000;
-  border-radius: 0 0 50% 50%;
-  position: absolute;
-  top: 60px;
-  left: 40px;
-}
-/* Whiskers */
-.whisker {
-  width: 30px;
-  height: 1px;
-  background-color: #fff;
-  position: absolute;
-  top: 55px; 
-  transform-origin: left center;
-}
-.whisker.left1 {
-  left: 20px;
-  transform: rotate(15deg);
-}
-.whisker.left2 {
-  left: 20px;
-}
-.whisker.left3 {
-  left: 20px;
-  transform: rotate(-15deg);
-}
-.whisker.right1 {
-  right: 20px;
-  transform: rotate(-15deg);
-}
-.whisker.right2 {
-  right: 20px;
-}
-.whisker.right3 {
-  right: 20px;
-  transform: rotate(15deg);
-}
-
-/* Paws */
-.paw {
-  width: 15px;
-  height: 15px;
-  background-color: #fff;
-  border-radius: 50%;
-  position: absolute;
-  bottom: 5px; 
-}
-
-.paw.front-left {
-  left: 15px;
-}
-.paw.front-right {
-  right: 15px;
-}
-.paw.back-left {
-  left: 5px;
-  bottom: -5px;
-}
-.paw.back-right {
-  right: 5px;
-  bottom: -5px;
-}
-
-/* Tail */
-.tail {
-  width: 50px;
-  height: 15px;
-  background-color: #fff;
-  border-radius: 50% 50% 0 0;
-  position: absolute;
-  bottom: 0;
-  left: 60px;
 
   
 
