@@ -1,30 +1,68 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... Firebase Authentication (as in previous example) ...
 
-    // Pet Object (Example)
-    let pet = {
-        health: 100,
-        mana: 100,
-        experience: 0,
-        skills: [],
-        emotion: 'happy',
-    };
+    // References to sections
+    const loginSection = document.getElementById('Log In');
+    const signupSection = document.getElementById('Sign Up');
+    const hero = document.getElementById('hero');
+    const about = document.getElementById('about');
 
-    // Function to update pet image based on emotion
-    function updatePetImage(emotion) {
-        document.getElementById('petImage').style.backgroundImage = `url('pet_${emotion}.png')`;
+    // Button references
+    const loginButton = document.getElementById('login-button');
+    const signupButton = document.getElementById('signup-button');
+    
+    // ... (Login/Signup Logic - Replace the placeholders with Firebase code) ...
+
+    // Pet Initialization (No Firebase dependency)
+    const petContainer = document.getElementById('pet-container');
+    const petElement = document.querySelector('.pet');
+    let isWalking = false;
+    let walkInterval;
+    let direction = 1; 
+
+    function startWalking() {
+        isWalking = true;
+        petElement.style.animationPlayState = 'running'; 
+
+        walkInterval = setInterval(() => {
+            const maxX = window.innerWidth - petElement.offsetWidth - 20;
+            const maxY = window.innerHeight - petElement.offsetHeight - 20; 
+
+            let newX = parseInt(petElement.style.left || 0) + (5 * direction);
+            let newY = parseInt(petElement.style.bottom || 0) + (Math.random() * 6 - 3);
+
+            if (newX < 0) {
+                newX = 0;
+                direction *= -1;
+            } else if (newX > maxX) {
+                newX = maxX;
+                direction *= -1; 
+            }
+
+            if (newY < 0) newY = 0;
+            if (newY > maxY) newY = maxY;
+
+            petElement.style.left = newX + 'px';
+            petElement.style.bottom = newY + 'px';
+            petElement.style.transform = `scaleX(${direction})`; 
+        }, 100); 
     }
 
-    // Function to update stat bars
-    function updateStats() {
-        document.getElementById('healthBar').style.width = `${pet.health}%`;
-        document.getElementById('manaBar').style.width = `${pet.mana}%`;
-        document.getElementById('expBar').style.width = `${pet.experience}%`;
+    function stopWalking() {
+        isWalking = false;
+        petElement.style.animationPlayState = 'paused';
+        clearInterval(walkInterval);
     }
 
-    // Initial pet state
-    updatePetImage(pet.emotion);
-    updateStats();
-
-    // ... Event listeners for feeding, liking/disliking posts, skill tree interaction, etc. ...
+    petContainer.style.display = 'block'; // Make the pet container visible on page load
+    startWalking(); 
+    
+    petElement.addEventListener('click', () => {
+        if (isWalking) {
+            stopWalking();
+        } else {
+            startWalking();
+        }
+    });
 });
+
+
