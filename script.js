@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Firebase Initialization (Replace with your actual config)
+    const firebaseConfig = {
+        // ... your Firebase configuration ...
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore(); // Or firebase.database() if you're using Realtime Database
+
     // References to sections
     const loginSection = document.getElementById('Log In');
     const signupSection = document.getElementById('Sign Up');
@@ -10,40 +17,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('login-button');
     const signupButton = document.getElementById('signup-button');
     
-    // ... (Login/Signup Logic - Replace the placeholders with Firebase code) ...
-
-    // Pet Initialization (No Firebase dependency)
-    const petContainer = document.getElementById('pet-container');
+    // Pet State and References
     const petElement = document.querySelector('.pet');
     let isWalking = false;
     let walkInterval;
-    let direction = 1; 
+    let directionX = 1; // 1 for right, -1 for left
+    let directionY = 1; // 1 for down, -1 for up
+    let currentX = 0; 
+    let currentY = 0; 
 
+    // Animation Parameters
+    const speedX = 5; 
+    const speedY = 3; 
+    const maxX = window.innerWidth - petElement.offsetWidth;
+    const maxY = window.innerHeight - petElement.offsetHeight;
+
+    // Walking Function
     function startWalking() {
         isWalking = true;
         petElement.style.animationPlayState = 'running'; 
 
         walkInterval = setInterval(() => {
-            const maxX = window.innerWidth - petElement.offsetWidth - 20;
-            const maxY = window.innerHeight - petElement.offsetHeight - 20; 
+            // Calculate new position
+            currentX += speedX * directionX;
+            currentY += speedY * directionY;
 
-            let newX = parseInt(petElement.style.left || 0) + (5 * direction);
-            let newY = parseInt(petElement.style.bottom || 0) + (Math.random() * 6 - 3);
-
-            if (newX < 0) {
-                newX = 0;
-                direction *= -1;
-            } else if (newX > maxX) {
-                newX = maxX;
-                direction *= -1; 
+            // Boundary checks
+            if (currentX < 0 || currentX > maxX) {
+                directionX *= -1;
+            }
+            if (currentY < 0 || currentY > maxY) {
+                directionY *= -1;
             }
 
-            if (newY < 0) newY = 0;
-            if (newY > maxY) newY = maxY;
-
-            petElement.style.left = newX + 'px';
-            petElement.style.bottom = newY + 'px';
-            petElement.style.transform = `scaleX(${direction})`; 
+            // Apply position and flip if needed
+            petElement.style.transform = `translateX(${currentX}px) translateY(${currentY}px) scaleX(${directionX})`;
         }, 100); 
     }
 
@@ -53,9 +61,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(walkInterval);
     }
 
-    petContainer.style.display = 'block'; // Make the pet container visible on page load
-    startWalking(); 
-    
+    // Initial state: Show the pet and start walking
+    petContainer.style.display = 'block';
+    startWalking();
+
+    // Click to toggle walking
     petElement.addEventListener('click', () => {
         if (isWalking) {
             stopWalking();
@@ -63,6 +73,30 @@ document.addEventListener('DOMContentLoaded', () => {
             startWalking();
         }
     });
+
+    // Login / Sign Up section toggling
+    if (loginButton && signupButton) { // Check if the buttons exist before adding event listeners
+        loginButton.addEventListener('click', () => {
+            hero.style.display = 'none';
+            about.style.display = 'none';
+            loginSection.style.display = 'block';
+            signupSection.style.display = 'none'; // Hide signup if it's visible
+        });
+
+        signupButton.addEventListener('click', () => {
+            hero.style.display = 'none';
+            about.style.display = 'none';
+            signupSection.style.display = 'block';
+            loginSection.style.display = 'none'; // Hide login if it's visible
+        });
+    }
+
+    // Placeholder for Firebase Authentication
+    // ... (Replace these comments with your actual Firebase authentication code) ...
+
+    // Pet Data Handling (Firebase)
+    // ... (Functions to fetch, update, and handle pet data in Firebase) ...
 });
+
 
 
