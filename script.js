@@ -1,102 +1,73 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ... Firebase Initialization (if needed) ...
 
-    // Firebase Initialization (Replace with your actual config)
-    const firebaseConfig = {
-        // ... your Firebase configuration ...
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore(); // Or firebase.database() if you're using Realtime Database
-
-    // References to sections
-    const loginSection = document.getElementById('Log In');
-    const signupSection = document.getElementById('Sign Up');
-    const hero = document.getElementById('hero');
-    const about = document.getElementById('about');
-
-    // Button references
-    const loginButton = document.getElementById('login-button');
-    const signupButton = document.getElementById('signup-button');
-    
-    // Pet State and References
+    // DOM References
     const petElement = document.querySelector('.pet');
-    let isWalking = false;
-    let walkInterval;
-    let directionX = 1; // 1 for right, -1 for left
-    let directionY = 1; // 1 for down, -1 for up
-    let currentX = 0; 
-    let currentY = 0; 
+    const petContainer = document.getElementById('pet-container');
+    // ... other references ...
 
-    // Animation Parameters
-    const speedX = 5; 
-    const speedY = 3; 
-    const maxX = window.innerWidth - petElement.offsetWidth;
-    const maxY = window.innerHeight - petElement.offsetHeight;
+    // Movement and Interaction State
+    let isDragging = false;
+    let currentX = petContainer.offsetWidth / 2; // Start at the center
+    let isFollowingCursor = false;
 
-    // Walking Function
-    function startWalking() {
-        isWalking = true;
-        petElement.style.animationPlayState = 'running'; 
+    // Movement Parameters
+    const speed = 10; // Adjust the movement speed as needed
 
-        walkInterval = setInterval(() => {
-            // Calculate new position
-            currentX += speedX * directionX;
-            currentY += speedY * directionY;
+    // Mouse/Touch Event Handlers
+    petElement.addEventListener('mousedown', () => {
+        isDragging = true;
+        stopWalking(); // Stop automatic walking if active
+    });
 
-            // Boundary checks
-            if (currentX < 0 || currentX > maxX) {
-                directionX *= -1;
-            }
-            if (currentY < 0 || currentY > maxY) {
-                directionY *= -1;
-            }
+    petElement.addEventListener('mouseup', () => {
+        isDragging = false;
+        startWalking(); // Resume automatic walking
+    });
 
-            // Apply position and flip if needed
-            petElement.style.transform = `translateX(${currentX}px) translateY(${currentY}px) scaleX(${directionX})`;
-        }, 100); 
-    }
-
-    function stopWalking() {
-        isWalking = false;
-        petElement.style.animationPlayState = 'paused';
-        clearInterval(walkInterval);
-    }
-
-    // Initial state: Show the pet and start walking
-    petContainer.style.display = 'block';
-    startWalking();
-
-    // Click to toggle walking
-    petElement.addEventListener('click', () => {
-        if (isWalking) {
-            stopWalking();
-        } else {
-            startWalking();
+    document.addEventListener('mousemove', (event) => {
+        if (isDragging) {
+            currentX = event.clientX - petElement.offsetWidth / 2;
+            updatePetPosition();
         }
     });
 
-    // Login / Sign Up section toggling
-    if (loginButton && signupButton) { // Check if the buttons exist before adding event listeners
-        loginButton.addEventListener('click', () => {
-            hero.style.display = 'none';
-            about.style.display = 'none';
-            loginSection.style.display = 'block';
-            signupSection.style.display = 'none'; // Hide signup if it's visible
-        });
+    // Cursor Following Toggle
+    petElement.addEventListener('dblclick', () => {
+        isFollowingCursor = !isFollowingCursor;
+        if (isFollowingCursor) {
+            startFollowingCursor();
+        } else {
+            stopWalking();
+        }
+    });
 
-        signupButton.addEventListener('click', () => {
-            hero.style.display = 'none';
-            about.style.display = 'none';
-            signupSection.style.display = 'block';
-            loginSection.style.display = 'none'; // Hide login if it's visible
+    // Cursor Following Function
+    function startFollowingCursor() {
+        document.addEventListener('mousemove', (event) => {
+            currentX = event.clientX - petElement.offsetWidth / 2;
+            updatePetPosition();
         });
     }
 
-    // Placeholder for Firebase Authentication
-    // ... (Replace these comments with your actual Firebase authentication code) ...
+    // Update Pet Position
+    function updatePetPosition() {
+        // Ensure the cat stays within the container
+        currentX = Math.max(0, Math.min(currentX, petContainer.offsetWidth - petElement.offsetWidth));
+        petElement.style.left = currentX + 'px';
 
-    // Pet Data Handling (Firebase)
-    // ... (Functions to fetch, update, and handle pet data in Firebase) ...
+        // Flip the sprite based on movement direction
+        if (currentX > previousX) {
+            petElement.style.transform = 'scaleX(1)'; // Face right
+        } else {
+            petElement.style.transform = 'scaleX(-1)'; // Face left
+        }
+        previousX = currentX; // Update previousX for the next comparison
+    }
+
+    // ... (Walking, Firebase, and other functions) ...
 });
+
 
 
 
