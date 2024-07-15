@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... Firebase Initialization (if needed) ...
+    // Firebase Initialization (if needed)
+    // ...
 
-    // DOM References
+    // Pet State and References
     const petElement = document.querySelector('.pet');
     const petContainer = document.getElementById('pet-container');
     // ... other references ...
@@ -9,26 +10,63 @@ document.addEventListener('DOMContentLoaded', () => {
     // Movement and Interaction State
     let isDragging = false;
     let currentX = petContainer.offsetWidth / 2; // Start at the center
+    let currentY = 0; // Assuming the pet starts at the bottom of the container
     let isFollowingCursor = false;
+    let previousX = currentX; // Initialize previousX
 
-    // Movement Parameters
-    const speed = 10; // Adjust the movement speed as needed
+    // Animation Parameters
+    const speedX = 5; 
+    const speedY = 3; 
+    const maxX = window.innerWidth - petElement.offsetWidth;
+    const maxY = window.innerHeight - petElement.offsetHeight;
 
-    // Mouse/Touch Event Handlers
-    petElement.addEventListener('mousedown', () => {
-        isDragging = true;
-        stopWalking(); // Stop automatic walking if active
-    });
+    // Function Definitions (Moved to the top)
+    function startWalking() {
+        isWalking = true;
+        petElement.style.animationPlayState = 'running';
+        walkInterval = setInterval(() => {
+            // ... (Movement logic as before) ...
+        }, 100); 
+    }
 
-    petElement.addEventListener('mouseup', () => {
-        isDragging = false;
-        startWalking(); // Resume automatic walking
-    });
+    function stopWalking() {
+        isWalking = false;
+        petElement.style.animationPlayState = 'paused';
+        clearInterval(walkInterval);
+    }
 
-    document.addEventListener('mousemove', (event) => {
-        if (isDragging) {
-            currentX = event.clientX - petElement.offsetWidth / 2;
-            updatePetPosition();
+    function updatePetPosition() {
+        // ... (Boundary checks as before) ...
+        petElement.style.transform = `translateX(${currentX}px) translateY(${currentY}px) scaleX(${directionX})`; 
+    }
+
+    // Function to fetch modules from your database (Firebase example)
+    async function fetchModulesFromDatabase(startIndex, numItems) {
+        const db = firebase.firestore();
+        const querySnapshot = await db.collection('microlearning_modules')
+            .orderBy('createdAt')
+            .startAfter(startIndex)
+            .limit(numItems)
+            .get();
+
+        const modules = [];
+        querySnapshot.forEach(doc => {
+            modules.push(doc.data());
+        });
+
+        return modules;
+    }
+
+    // Initial state: Show the pet and start walking
+    petContainer.style.display = 'block';
+    startWalking();
+
+    // Click to toggle walking
+    petElement.addEventListener('click', () => {
+        if (isWalking) {
+            stopWalking();
+        } else {
+            startWalking();
         }
     });
 
@@ -38,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isFollowingCursor) {
             startFollowingCursor();
         } else {
-            stopWalking();
+            stopWalking(); // Stop automatic walking if enabled
         }
     });
 
@@ -50,23 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Update Pet Position
-    function updatePetPosition() {
-        // Ensure the cat stays within the container
-        currentX = Math.max(0, Math.min(currentX, petContainer.offsetWidth - petElement.offsetWidth));
-        petElement.style.left = currentX + 'px';
+    // Login / Sign Up section toggling
+    if (loginButton && signupButton) {
+        loginButton.addEventListener('click', () => {
+            hero.style.display = 'none';
+            about.style.display = 'none';
+            loginSection.style.display = 'block';
+            signupSection.style.display = 'none'; // Hide signup if it's visible
+        });
 
-        // Flip the sprite based on movement direction
-        if (currentX > previousX) {
-            petElement.style.transform = 'scaleX(1)'; // Face right
-        } else {
-            petElement.style.transform = 'scaleX(-1)'; // Face left
-        }
-        previousX = currentX; // Update previousX for the next comparison
+        signupButton.addEventListener('click', () => {
+            hero.style.display = 'none';
+            about.style.display = 'none';
+            signupSection.style.display = 'block';
+            loginSection.style.display = 'none'; // Hide login if it's visible
+        });
     }
 
-    // ... (Walking, Firebase, and other functions) ...
+    // Placeholder for Firebase Authentication
+    // ... (Replace these comments with your actual Firebase authentication code) ...
+
+    // Pet Data Handling (Firebase)
+    // ... (Functions to fetch, update, and handle pet data in Firebase) ...
 });
+
 
 
 
