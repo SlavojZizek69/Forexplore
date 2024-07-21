@@ -1,14 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Interactive 2D Cat Character (SVG)</title>
-    <link rel="stylesheet" href="style.css"> 
+<title>Interactive 2D Cat Character (SVG)</title>
+<style>
+#pet-container {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+
+@keyframes walkCycle {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+
+.bar.low-health {
+    fill: yellow;
+}
+
+.bar.critical-health {
+    fill: red;
+}
+</style>
 </head>
 <body>
     <div id="pet-container"></div>
-    <script src="script.js"></script> 
-</body>
-</html>
+
+    <script>
 
 
 
