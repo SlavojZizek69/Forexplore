@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ['rect', { x: 72, y: 90, width: 8, height: 15, fill: '#F4A460' }]
     ];
 
-    const petElement = svg;
+    // Append all elements to SVG
     svgElements.forEach(([tagName, attributes]) => {
-        petElement.appendChild(createSVGElement(tagName, attributes));
+        svg.appendChild(createSVGElement(tagName, attributes)); // Append to the SVG element
     });
 
     // Movement and Interaction State
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const accelerationX = 0.1;
     const friction = 0.8;
 
-    petElement.addEventListener('click', () => {
+    svgContainer.addEventListener('click', () => { 
         isFollowingCursor = !isFollowingCursor;
         if (isFollowingCursor) {
             startFollowingCursor();
@@ -65,36 +65,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startFollowingCursor() {
         document.addEventListener('mousemove', updatePetPosition);
-        petElement.style.animation = 'walkCycle 2s infinite';
+        svg.style.animation = 'walkCycle 2s infinite';
     }
 
     function stopFollowingCursor() {
         document.removeEventListener('mousemove', updatePetPosition);
-        petElement.style.animation = 'none';
+        svg.style.animation = 'none';
     }
 
     function updatePetPosition(event) {
         if (isFollowingCursor) {
-            const targetX = event.clientX - svgContainer.getBoundingClientRect().left - petElement.getBBox().width / 2;
+            const targetX = event.clientX - svgContainer.getBoundingClientRect().left - svg.getBBox().width / 2;
             velocityX += (targetX - currentX) * accelerationX;
             velocityX *= friction;
             currentX += velocityX;
-            currentX = Math.max(0, Math.min(currentX, svgContainer.clientWidth - petElement.getBBox().width));
+            currentX = Math.max(0, Math.min(currentX, svgContainer.clientWidth - svg.getBBox().width));
         } else {
             velocityX *= friction;
             currentX += velocityX;
         }
 
-        petElement.setAttribute('transform', `translate(${currentX}, ${currentY}) scaleX(${currentX > previousX ? 1 : -1})`);
+        svg.setAttribute('transform', `translate(${currentX}, ${currentY}) scaleX(${currentX > previousX ? 1 : -1})`);
         previousX = currentX;
 
         if (Math.abs(velocityX) > 0.5) {
-            petElement.style.animation = 'walkCycle 2s infinite';
+            svg.style.animation = 'walkCycle 2s infinite';
         } else {
-            petElement.style.animation = 'none';
+            svg.style.animation = 'none';
         }
     }
 });
+
 
 
 
