@@ -3,195 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 2D Cat Character (SVG)</title>
+    <title>Simple Cat Game</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
         #pet-container {
-            width: 400px;
-            height: 400px;
-            border: 1px solid #ccc;
-            background-color: white;
-        }
-        #skill-tray {
-            width: 400px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-        .skill-slot {
-            width: 40px;
-            height: 40px;
-            background-color: #fff;
-            border-radius: 5px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            margin-bottom: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            cursor: move;
-            transition: background-color 0.3s;
+            font-size: 100px;
         }
-        .skill-slot:hover {
-            background-color: #f0f0f0;
+        #health-bar {
+            width: 300px;
+            height: 20px;
+            background-color: #ddd;
+            margin-bottom: 20px;
         }
-        .dragging {
-            opacity: 0.5;
+        #health-fill {
+            width: 100%;
+            height: 100%;
+            background-color: green;
+            transition: width 0.3s;
+        }
+        #skill-tray {
+            display: flex;
+            gap: 10px;
+        }
+        .food-item {
+            font-size: 30px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="pet-container"></div>
-    <div id="skill-tray"></div>
+    <div id="pet-container">🐱</div>
+    <div id="health-bar"><div id="health-fill"></div></div>
+    <div id="skill-tray">
+        <span class="food-item" draggable="true">🍎</span>
+        <span class="food-item" draggable="true">🍌</span>
+        <span class="food-item" draggable="true">🥕</span>
+        <span class="food-item" draggable="true">🍖</span>
+        <span class="food-item" draggable="true">🍣</span>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const svgContainer = document.getElementById('pet-container');
-            const skillTray = document.getElementById('skill-tray');
-            const svgns = "http://www.w3.org/2000/svg";
+        const petContainer = document.getElementById('pet-container');
+        const healthFill = document.getElementById('health-fill');
+        const foodItems = document.querySelectorAll('.food-item');
 
-            const svg = document.createElementNS(svgns, 'svg');
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '100%');
-            svg.setAttribute('viewBox', '0 0 200 200');
-            svgContainer.appendChild(svg);
+        let health = 100;
 
-            function createSVGElement(tagName, attributes) {
-                const element = document.createElementNS(svgns, tagName);
-                for (const attr in attributes) {
-                    element.setAttribute(attr, attributes[attr]);
-                }
-                return element;
-            }
+        function updateHealth() {
+            healthFill.style.width = `${health}%`;
+        }
 
-            const catGroup = createSVGElement('g', { transform: 'translate(100, 100)' });
-            svg.appendChild(catGroup);
+        function makeRainbow() {
+            const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+            let i = 0;
+            const interval = setInterval(() => {
+                healthFill.style.backgroundColor = colors[i];
+                i = (i + 1) % colors.length;
+                if (i === 0) clearInterval(interval);
+            }, 200);
+        }
 
-            const svgElements = [
-                // Cat Body
-                ['ellipse', { cx: 0, cy: 30, rx: 30, ry: 20, fill: '#F4A460' }],
-                ['ellipse', { cx: 0, cy: 40, rx: 20, ry: 10, fill: '#fff' }],
-                // Cat Head
-                ['circle', { cx: 0, cy: 0, r: 20, fill: '#F4A460' }],
-                // Ears
-                ['polygon', { points: "-10,-15 -20,-30 -5,-35", fill: '#F4A460' }],
-                ['polygon', { points: "10,-15 20,-30 5,-35", fill: '#F4A460' }],
-                // Eyes
-                ['circle', { cx: -10, cy: -5, r: 4, fill: '#000' }],
-                ['circle', { cx: 10, cy: -5, r: 4, fill: '#000' }],
-                // Nose & Mouth
-                ['polygon', { points: "0,-2 -2,2 2,2", fill: '#000' }],
-                ['path', { d: "M -5 0 Q 0 5 5 0", stroke: '#000', fill: 'none' }],
-                // Tail
-                ['path', { d: "M 20 20 C 30 0 40 40 30 30", stroke: '#F4A460', strokeWidth: '5', fill: 'none' }],
-                // Legs
-                ['rect', { x: -15, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-                ['rect', { x: 7, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-                ['rect', { x: -30, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-                ['rect', { x: 22, y: 45, width: 8, height: 15, fill: '#F4A460' }]
-            ];
-
-            svgElements.forEach(([tagName, attributes]) => {
-                catGroup.appendChild(createSVGElement(tagName, attributes));
+        foodItems.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.textContent);
             });
-
-            // Health Bar
-            const healthBarBackground = createSVGElement('rect', { 
-                x: 50, y: 170, width: 100, height: 20, fill: '#ddd', rx: 5, ry: 5
-            });
-            const healthBarFill = createSVGElement('rect', { 
-                x: 50, y: 170, width: 100, height: 20, fill: 'green', rx: 5, ry: 5
-            });
-            const healthBarText = createSVGElement('text', { 
-                x: 100, y: 185, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#000', 'font-size': '14px'
-            });
-            healthBarText.textContent = "100";
-            svg.appendChild(healthBarBackground);
-            svg.appendChild(healthBarFill);
-            svg.appendChild(healthBarText);
-
-            // Mana Bar
-            const manaBarBackground = createSVGElement('rect', { 
-                x: 50, y: 195, width: 100, height: 20, fill: '#ddd', rx: 5, ry: 5
-            });
-            const manaBarFill = createSVGElement('rect', { 
-                x: 50, y: 195, width: 100, height: 20, fill: 'blue', rx: 5, ry: 5
-            });
-            const manaBarText = createSVGElement('text', { 
-                x: 100, y: 210, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#fff', 'font-size': '14px'
-            });
-            manaBarText.textContent = "100";
-            svg.appendChild(manaBarBackground);
-            svg.appendChild(manaBarFill);
-            svg.appendChild(manaBarText);
-
-            let health = 100;
-            let mana = 100;
-
-            function updateBars() {
-                healthBarFill.setAttribute('width', health);
-                healthBarText.textContent = health;
-                manaBarFill.setAttribute('width', mana);
-                manaBarText.textContent = mana;
-            }
-
-            // Skill Tray
-            const foodEmojis = ['🍎', '🍌', '🥕', '🍗', '🍣', '🍕', '🌮', '🍦', '🥗', '🍰'];
-
-            for (let i = 0; i < 10; i++) {
-                const skillSlot = document.createElement('div');
-                skillSlot.className = 'skill-slot';
-                skillSlot.textContent = foodEmojis[i];
-                skillSlot.draggable = true;
-                skillTray.appendChild(skillSlot);
-
-                skillSlot.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', e.target.textContent);
-                    e.target.classList.add('dragging');
-                });
-
-                skillSlot.addEventListener('dragend', (e) => {
-                    e.target.classList.remove('dragging');
-                });
-            }
-
-            svgContainer.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-
-            svgContainer.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const food = e.dataTransfer.getData('text');
-                console.log(`Cat ate ${food}`);
-                health = Math.min(100, health + 10);
-                updateBars();
-                makeHealthBarRainbow();
-            });
-
-            function makeHealthBarRainbow() {
-                const rainbow = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
-                let index = 0;
-                const interval = setInterval(() => {
-                    healthBarFill.setAttribute('fill', rainbow[index]);
-                    index = (index + 1) % rainbow.length;
-                    if (index === 0) {
-                        clearInterval(interval);
-                        healthBarFill.setAttribute('fill', 'green');
-                    }
-                }, 200);
-            }
         });
+
+        petContainer.addEventListener('dragover', (e) => e.preventDefault());
+
+        petContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const food = e.dataTransfer.getData('text');
+            console.log(`Cat ate ${food}`);
+            health = Math.min(100, health + 10);
+            updateHealth();
+            makeRainbow();
+        });
+
+        updateHealth();
     </script>
 </body>
 </html>
