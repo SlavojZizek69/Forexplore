@@ -1,17 +1,50 @@
 #pet-container {
-    width: 200px; 
-    height: 200px; 
-    border: 1px solid #ccc; /* Optional: Add a border for visibility */
-    position: relative; /* Ensure relative positioning for the cat's movement */
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ccc;
+    position: relative;
 }
 
-    /* Add any necessary styles for the SVG cat here */
 
 
 @keyframes walkCycle {
     0% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
     100% { transform: translateY(0); }
+}
+
+
+.bar.low-health {
+    fill: yellow;
+}
+
+.bar.critical-health {
+    fill: red;
+}
+
+/* ... (Your existing CSS) ... */
+
+#skill-tray {
+    display: flex;
+    gap: 10px;  /* Space between slots */
+    background-color: #222; /* Dark tray background */
+    padding: 10px;
+    border-radius: 10px; /* Optional: Rounded corners for the tray */
+}
+
+.skill-slot {
+    width: 50px; /* Adjust the size as needed */
+    height: 50px;
+    border-radius: 50%; /* Creates a circular slot */
+    background-color: #333; /* Slightly darker slot background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.food-item {
+    font-size: 30px; 
+    cursor: pointer;
 }
 
 
