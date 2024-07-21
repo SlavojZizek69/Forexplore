@@ -13,12 +13,37 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
         #pet-container {
             width: 400px;
-            height: 450px;
+            height: 500px;
             border: 1px solid #ccc;
             background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #skill-tray {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .skill-slot {
+            width: 40px;
+            height: 40px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .skill-slot:hover {
+            background-color: #d0d0d0;
         }
     </style>
 </head>
@@ -31,7 +56,7 @@
 
             const svg = document.createElementNS(svgns, 'svg');
             svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '100%');
+            svg.setAttribute('height', '400px');
             svg.setAttribute('viewBox', '0 0 200 225');
             svgContainer.appendChild(svg);
 
@@ -126,6 +151,25 @@
 
                 manaBarFill.setAttribute('width', mana);
                 manaBarText.textContent = mana;
+            }
+
+            // Skill Tray
+            const skillTray = document.createElement('div');
+            skillTray.id = 'skill-tray';
+            svgContainer.appendChild(skillTray);
+
+            const foodEmojis = ['🍎', '🍌', '🥕', '🍗', '🍣', '🍕', '🌮', '🍦', '🥗', '🍰'];
+
+            for (let i = 0; i < 10; i++) {
+                const skillSlot = document.createElement('div');
+                skillSlot.className = 'skill-slot';
+                skillSlot.textContent = foodEmojis[i];
+                skillTray.appendChild(skillSlot);
+
+                skillSlot.addEventListener('click', () => {
+                    console.log(`Skill ${i + 1} (${foodEmojis[i]}) activated!`);
+                    // You can add specific skill actions here
+                });
             }
         });
     </script>
