@@ -3,41 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Cat Game</title>
+    <title>Cat Game with Skill Tray</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-        }
-        #pet-container {
-            width: 300px;
-            height: 300px;
-            border: 1px solid black;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 100px;
-        }
-        #health-bar {
-            width: 300px;
-            height: 20px;
-            background-color: #ddd;
-            margin-bottom: 20px;
-        }
-        #health-fill {
-            width: 100%;
-            height: 100%;
-            background-color: green;
-            transition: width 0.3s;
-        }
+    
+
         #skill-tray {
+            background-color: #f0f0f0; 
+            padding: 20px;
+            border-radius: 10px; 
             display: flex;
-            gap: 10px;
+            justify-content: space-around;
         }
-        .food-item {
+
+        .skill-slot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%; 
+            border: 2px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 30px;
             cursor: pointer;
         }
@@ -47,44 +32,30 @@
     <div id="pet-container">🐱</div>
     <div id="health-bar"><div id="health-fill"></div></div>
     <div id="skill-tray">
-        <span class="food-item" draggable="true">🍎</span>
-        <span class="food-item" draggable="true">🍌</span>
-        <span class="food-item" draggable="true">🥕</span>
-        <span class="food-item" draggable="true">🍖</span>
-        <span class="food-item" draggable="true">🍣</span>
-        <div id="skill-tray">
-            <div class="skill-slot"><span class="food-item" draggable="true">🍎</span></div>
-            <div class="skill-slot"><span class="food-item" draggable="true">🍌</span></div>
-            <div class="skill-slot"><span class="food-item" draggable="true">🥕</span></div>
-            <div class="skill-slot"><span class="food-item" draggable="true">🍖</span></div>
-            <div class="skill-slot"><span class="food-item" draggable="true">🍣</span></div>
-        </div>
-        
+        <div class="skill-slot" data-emoji="🍎"></div>
+        <div class="skill-slot" data-emoji="🍌"></div>
+        <div class="skill-slot" data-emoji="🥕"></div>
+        <div class="skill-slot" data-emoji="🍖"></div>
+        <div class="skill-slot" data-emoji="🍣"></div>
+    </div>
 
     <script>
         const petContainer = document.getElementById('pet-container');
         const healthFill = document.getElementById('health-fill');
-        const foodItems = document.querySelectorAll('.food-item');
+        const skillSlots = document.querySelectorAll('.skill-slot');
 
         let health = 100;
+        let rainbowActive = false;
 
-        function updateHealth() {
-            healthFill.style.width = `${health}%`;
-        }
+        // ... (Your existing updateHealth() and makeRainbow() functions) ...
 
-        function makeRainbow() {
-            const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
-            let i = 0;
-            const interval = setInterval(() => {
-                healthFill.style.backgroundColor = colors[i];
-                i = (i + 1) % colors.length;
-                if (i === 0) clearInterval(interval);
-            }, 200);
-        }
+        skillSlots.forEach(slot => {
+            slot.addEventListener('click', () => {
+                rainbowActive = !rainbowActive;
+            });
 
-        foodItems.forEach(item => {
-            item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', e.target.textContent);
+            slot.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.dataset.emoji);
             });
         });
 
@@ -93,16 +64,21 @@
         petContainer.addEventListener('drop', (e) => {
             e.preventDefault();
             const food = e.dataTransfer.getData('text');
-            console.log(`Cat ate ${food}`);
-            health = Math.min(100, health + 10);
-            updateHealth();
-            makeRainbow();
+
+            if (rainbowActive) {
+                makeRainbow();
+            } else {
+                // ... (Your existing non-rainbow feeding logic) ...
+                health = Math.min(100, health + 10); 
+                updateHealth();
+            }
         });
 
         updateHealth();
     </script>
 </body>
 </html>
+
 
 
 
