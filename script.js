@@ -39,10 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ['rect', { x: 72, y: 90, width: 8, height: 15, fill: '#F4A460' }]
     ];
 
-    // Append all elements to SVG
+    const catGroup = createSVGElement('g', {});
     svgElements.forEach(([tagName, attributes]) => {
-        svg.appendChild(createSVGElement(tagName, attributes)); // Append to the SVG element
+        catGroup.appendChild(createSVGElement(tagName, attributes));
     });
+    svg.appendChild(catGroup);
 
     // Movement and Interaction State
     let isFollowingCursor = false;
@@ -54,7 +55,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const accelerationX = 0.1;
     const friction = 0.8;
 
-    svgContainer.addEventListener('click', () => { 
+    // Health Bar
+    const healthBar = document.getElementById('healthBar'); 
+    let health = 100;
+
+    // Cat Click Event
+    catGroup.addEventListener('click', () => {
+        health -= 10;
+        updateHealthBar();
+        if (health <= 0) {
+            alert('Game Over!');
+            health = 100; // Reset health (optional)
+            updateHealthBar();
+        }
+    });
+
+    // Health Bar Update Function
+    function updateHealthBar() {
+        const healthPercentage = health / 100 * 100;
+        healthBar.style.width = `${healthPercentage}%`;
+
+        healthBar.classList.remove('low-health', 'critical-health');
+        if (health <= 50) {
+            healthBar.classList.add('low-health');
+        }
+        if (health <= 20) {
+            healthBar.classList.add('critical-health');
+        }
+    }
+    
+   // Cursor Following
+   svgContainer.addEventListener('click', () => { 
         isFollowingCursor = !isFollowingCursor;
         if (isFollowingCursor) {
             startFollowingCursor();
@@ -65,36 +96,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startFollowingCursor() {
         document.addEventListener('mousemove', updatePetPosition);
-        svg.style.animation = 'walkCycle 2s infinite';
+        catGroup.style.animation = 'walkCycle 2s infinite'; // Apply animation to the group
     }
 
     function stopFollowingCursor() {
         document.removeEventListener('mousemove', updatePetPosition);
-        svg.style.animation = 'none';
+        catGroup.style.animation = 'none'; // Remove animation from the group
     }
 
     function updatePetPosition(event) {
         if (isFollowingCursor) {
-            const targetX = event.clientX - svgContainer.getBoundingClientRect().left - svg.getBBox().width / 2;
+            const targetX = event.clientX - svgContainer.getBoundingClientRect().left - catGroup.getBBox().width / 2; // Use catGroup.getBBox()
             velocityX += (targetX - currentX) * accelerationX;
             velocityX *= friction;
             currentX += velocityX;
-            currentX = Math.max(0, Math.min(currentX, svgContainer.clientWidth - svg.getBBox().width));
+            currentX = Math.max(0, Math.min(currentX, svgContainer.clientWidth - catGroup.getBBox().width));
         } else {
             velocityX *= friction;
             currentX += velocityX;
         }
 
-        svg.setAttribute('transform', `translate(${currentX}, ${currentY}) scaleX(${currentX > previousX ? 1 : -1})`);
+        catGroup.setAttribute('transform', `translate(${currentX}, ${currentY}) scaleX(${currentX > previousX ? 1 : -1})`); // Apply transform to the group
         previousX = currentX;
 
         if (Math.abs(velocityX) > 0.5) {
-            svg.style.animation = 'walkCycle 2s infinite';
+            catGroup.style.animation = 'walkCycle 2s infinite';
         } else {
-            svg.style.animation = 'none';
+            catGroup.style.animation = 'none';
         }
     }
 });
+
+
 
 
 
