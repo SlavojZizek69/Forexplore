@@ -9,6 +9,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -17,47 +18,53 @@
         }
         #pet-container {
             width: 400px;
-            height: 500px;
+            height: 400px;
             border: 1px solid #ccc;
             background-color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         #skill-tray {
+            width: 400px;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 5px;
             margin-top: 10px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
         }
         .skill-slot {
             width: 40px;
             height: 40px;
-            background-color: #e0e0e0;
+            background-color: #fff;
             border-radius: 5px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
-            cursor: pointer;
+            cursor: move;
             transition: background-color 0.3s;
         }
         .skill-slot:hover {
-            background-color: #d0d0d0;
+            background-color: #f0f0f0;
+        }
+        .dragging {
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
     <div id="pet-container"></div>
+    <div id="skill-tray"></div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const svgContainer = document.getElementById('pet-container');
+            const skillTray = document.getElementById('skill-tray');
             const svgns = "http://www.w3.org/2000/svg";
 
             const svg = document.createElementNS(svgns, 'svg');
             svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '400px');
-            svg.setAttribute('viewBox', '0 0 200 225');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('viewBox', '0 0 200 200');
             svgContainer.appendChild(svg);
 
             function createSVGElement(tagName, attributes) {
@@ -132,44 +139,57 @@
             let health = 100;
             let mana = 100;
 
-            catGroup.addEventListener('click', () => {
-                health = Math.max(0, health - 10);
-                mana = Math.max(0, mana - 10);
-                updateBars();
-                if (health <= 0 || mana <= 0) {
-                    alert('Game Over!');
-                    health = 100;
-                    mana = 100;
-                    updateBars();
-                }
-            });
-
             function updateBars() {
                 healthBarFill.setAttribute('width', health);
-                healthBarFill.setAttribute('fill', health > 50 ? 'green' : health > 20 ? 'yellow' : 'red');
                 healthBarText.textContent = health;
-
                 manaBarFill.setAttribute('width', mana);
                 manaBarText.textContent = mana;
             }
 
             // Skill Tray
-            const skillTray = document.createElement('div');
-            skillTray.id = 'skill-tray';
-            svgContainer.appendChild(skillTray);
-
             const foodEmojis = ['🍎', '🍌', '🥕', '🍗', '🍣', '🍕', '🌮', '🍦', '🥗', '🍰'];
 
             for (let i = 0; i < 10; i++) {
                 const skillSlot = document.createElement('div');
                 skillSlot.className = 'skill-slot';
                 skillSlot.textContent = foodEmojis[i];
+                skillSlot.draggable = true;
                 skillTray.appendChild(skillSlot);
 
-                skillSlot.addEventListener('click', () => {
-                    console.log(`Skill ${i + 1} (${foodEmojis[i]}) activated!`);
-                    // You can add specific skill actions here
+                skillSlot.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.target.textContent);
+                    e.target.classList.add('dragging');
                 });
+
+                skillSlot.addEventListener('dragend', (e) => {
+                    e.target.classList.remove('dragging');
+                });
+            }
+
+            svgContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            svgContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const food = e.dataTransfer.getData('text');
+                console.log(`Cat ate ${food}`);
+                health = Math.min(100, health + 10);
+                updateBars();
+                makeHealthBarRainbow();
+            });
+
+            function makeHealthBarRainbow() {
+                const rainbow = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+                let index = 0;
+                const interval = setInterval(() => {
+                    healthBarFill.setAttribute('fill', rainbow[index]);
+                    index = (index + 1) % rainbow.length;
+                    if (index === 0) {
+                        clearInterval(interval);
+                        healthBarFill.setAttribute('fill', 'green');
+                    }
+                }, 200);
             }
         });
     </script>
