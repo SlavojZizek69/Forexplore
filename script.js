@@ -1,90 +1,117 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const svgContainer = document.getElementById('pet-container');
-    const svgns = "http://www.w3.org/2000/svg";
+    const canvas = document.getElementById('catCanvas');
+    const ctx = canvas.getContext('2d');
 
-    const svg = document.createElementNS(svgns, 'svg');
-    svg.classList.add('pet');
-    svg.setAttribute('viewBox', '0 0 200 200');  // Increased viewBox size
-    svg.setAttribute('width', '100%');  // Make SVG responsive
-    svg.setAttribute('height', '100%');
-    svgContainer.appendChild(svg);
+    // Cat Parts (You can customize these values)
+    const body = {
+        shape: 'ellipse',
+        x: 64,
+        y: 70,
+        radiusX: 30,
+        radiusY: 20,
+        fill: '#F4A460'
+    };
 
-    function createSVGElement(tagName, attributes) {
-        const element = document.createElementNS(svgns, tagName);
-        for (const attr in attributes) {
-            element.setAttribute(attr, attributes[attr]);
-        }
-        return element;
+    const head = {
+        shape: 'circle',
+        x: 64,
+        y: 30,
+        radius: 20,
+        fill: '#F4A460'
+    };
+
+    const earLeft = {
+        shape: 'triangle',
+        points: [[50, 15], [40, 5], [55, 10]],
+        fill: '#F4A460'
+    };
+
+    const earRight = {
+        shape: 'triangle',
+        points: [[74, 15], [84, 5], [79, 10]],
+        fill: '#F4A460'
+    };
+
+    const eyeLeft = { shape: 'circle', x: 48, y: 30, radius: 4, fill: '#000' };
+    const eyeRight = { shape: 'circle', x: 76, y: 30, radius: 4, fill: '#000' };
+
+    const nose = {
+        shape: 'triangle',
+        points: [[64, 38], [60, 42], [68, 42]],
+        fill: '#000'
+    };
+
+    const mouth = {
+        shape: 'curve',
+        start: [56, 42],
+        control1: [64, 48],
+        control2: [72, 48],
+        end: [80, 42],
+        stroke: '#000',
+        lineWidth: 2
+    };
+
+    const tail = {
+        shape: 'curve',
+        start: [90, 65],
+        control1: [100, 45],
+        control2: [110, 85],
+        end: [100, 75],
+        stroke: '#F4A460',
+        lineWidth: 5,
+        fill: 'none'
+    };
+
+    // ... Add more parts as needed (legs, whiskers, etc.)
+
+    // Drawing Functions
+    function drawEllipse(ellipse) {
+        ctx.beginPath();
+        ctx.ellipse(ellipse.x, ellipse.y, ellipse.radiusX, ellipse.radiusY, 0, 0, 2 * Math.PI);
+        ctx.fillStyle = ellipse.fill;
+        ctx.fill();
     }
 
-    const catGroup = createSVGElement('g', { transform: 'translate(100, 100)' });  // Center the cat
-    svg.appendChild(catGroup);
-
-    const svgElements = [
-        // Cat Body
-        ['ellipse', { cx: 0, cy: 30, rx: 30, ry: 20, fill: '#F4A460' }],
-        ['ellipse', { cx: 0, cy: 40, rx: 20, ry: 10, fill: '#fff' }],
-        // Cat Head
-        ['circle', { cx: 0, cy: 0, r: 20, fill: '#F4A460' }],
-        // Ears
-        ['polygon', { points: "-10,-15 -20,-30 -5,-35", fill: '#F4A460' }],
-        ['polygon', { points: "10,-15 20,-30 5,-35", fill: '#F4A460' }],
-        // Eyes
-        ['circle', { cx: -10, cy: -5, r: 4, fill: '#000' }],
-        ['circle', { cx: 10, cy: -5, r: 4, fill: '#000' }],
-        // Nose & Mouth
-        ['polygon', { points: "0,-2 -2,2 2,2", fill: '#000' }],
-        ['path', { d: "M -5 0 Q 0 5 5 0", stroke: '#000', fill: 'none' }],
-        // Tail
-        ['path', { d: "M 20 20 C 30 0 40 40 30 30", stroke: '#F4A460', strokeWidth: '5', fill: 'none' }],
-        // Legs
-        ['rect', { x: -15, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-        ['rect', { x: 7, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-        ['rect', { x: -30, y: 45, width: 8, height: 15, fill: '#F4A460' }],
-        ['rect', { x: 22, y: 45, width: 8, height: 15, fill: '#F4A460' }]
-    ];
-
-    svgElements.forEach(([tagName, attributes]) => {
-        catGroup.appendChild(createSVGElement(tagName, attributes));
-    });
-
-    // Health Bar (Created as SVG Elements)
-    const healthBarBackground = createSVGElement('rect', { 
-        x: 50, y: 170, width: 100, height: 20, fill: '#ddd', rx: 5, ry: 5, id: 'healthBarBackground'
-    });
-    const healthBarFill = createSVGElement('rect', { 
-        x: 50, y: 170, width: 100, height: 20, fill: 'green', rx: 5, ry: 5, id: 'healthBar' 
-    });
-    const healthBarText = createSVGElement('text', { 
-        x: 100, y: 185, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#000', 'font-size': 14
-    });
-    healthBarText.textContent = "100";
-    svg.appendChild(healthBarBackground);
-    svg.appendChild(healthBarFill);
-    svg.appendChild(healthBarText);
-
-    // Health State
-    let health = 100;
-
-    // Cat Click Event
-    catGroup.addEventListener('click', () => {
-        health = Math.max(0, health - 10);  // Ensure health doesn't go below 0
-        updateHealthBar();
-        if (health <= 0) {
-            alert('Game Over!');
-            health = 100; // Reset health
-            updateHealthBar();
-        }
-    });
-
-    // Health Bar Update Function
-    function updateHealthBar() {
-        const healthPercentage = health / 100;
-        healthBarFill.setAttribute('width', 100 * healthPercentage);
-        healthBarFill.setAttribute('fill', health > 50 ? 'green' : health > 20 ? 'yellow' : 'red'); 
-        healthBarText.textContent = health;
+    function drawCircle(circle) {
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = circle.fill;
+        ctx.fill();
     }
 
-    // Remove movement-related code to keep the cat centered
+    function drawTriangle(triangle) {
+        ctx.beginPath();
+        ctx.moveTo(triangle.points[0][0], triangle.points[0][1]);
+        ctx.lineTo(triangle.points[1][0], triangle.points[1][1]);
+        ctx.lineTo(triangle.points[2][0], triangle.points[2][1]);
+        ctx.closePath();
+        ctx.fillStyle = triangle.fill;
+        ctx.fill();
+    }
+
+    function drawCurve(curve) {
+        ctx.beginPath();
+        ctx.moveTo(curve.start[0], curve.start[1]);
+        ctx.bezierCurveTo(...curve.control1, ...curve.control2, ...curve.end);
+        ctx.strokeStyle = curve.stroke;
+        ctx.lineWidth = curve.lineWidth;
+        if (curve.fill) ctx.fillStyle = curve.fill;
+        ctx.stroke();
+        if (curve.fill) ctx.fill();
+    }
+
+    // Draw the cat
+    drawEllipse(body);
+    drawEllipse(belly);
+    drawCircle(head);
+    drawTriangle(earLeft);
+    drawTriangle(earRight);
+    drawCircle(eyeLeft);
+    drawCircle(eyeRight);
+    drawTriangle(nose);
+    drawCurve(mouth);
+    drawCurve(tail);
+    // ... Draw other parts ...
 });
+
 
