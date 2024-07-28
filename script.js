@@ -113,5 +113,43 @@ document.addEventListener('DOMContentLoaded', () => {
     drawCurve(tail);
     // ... Draw other parts ...
 });
+// Function to fit the cat to the container
+function fitCatToContainer() {
+    const containerWidth = canvas.parentElement.clientWidth;  // Get container width
+    const containerHeight = canvas.parentElement.clientHeight; // Get container height
 
+    // Calculate aspect ratios
+    const catAspectRatio = 128 / 128;  // Assuming the original cat size
+    const containerAspectRatio = containerWidth / containerHeight;
+
+    let scale = 1;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (catAspectRatio > containerAspectRatio) {
+        // Cat is wider than container, scale based on width
+        scale = containerWidth / 128; // 128 is original cat width
+        yOffset = (containerHeight - 128 * scale) / 2;
+    } else {
+        // Cat is taller than container, scale based on height
+        scale = containerHeight / 128; // 128 is original cat height
+        xOffset = (containerWidth - 128 * scale) / 2;
+    }
+
+    // Adjust canvas dimensions and redraw
+    canvas.width = containerWidth;
+    canvas.height = containerHeight;
+
+    ctx.save();
+    ctx.translate(xOffset, yOffset);
+    ctx.scale(scale, scale);
+    drawCat();
+    ctx.restore();
+}
+
+// Call the function initially to fit the cat when the page loads
+fitCatToContainer();
+
+// Add an event listener to adjust the cat when the window is resized
+window.addEventListener('resize', fitCatToContainer);
 
